@@ -22,5 +22,4 @@ export async function _in_vendor_interface_control_transfer(usbDevice, request, 
     };
     let result = await usbDevice.controlTransferIn(parameters);
     return result;
-
 }
