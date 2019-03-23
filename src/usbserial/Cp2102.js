@@ -87,3 +87,14 @@ export async function setBaudRate(usbDevice, baudRate) {
     );
 }
 
+export async function setDataBits(usbDevice, dataBits) {
+    //TODO
+}
+
+export async function setStopBits(usbDevice, stopBits) {
+    //TODO
+}
+
+export async function setParity(usbDevice, parity) {
+    //TODO
+}
