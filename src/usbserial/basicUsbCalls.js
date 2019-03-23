@@ -1,6 +1,6 @@
 //TODO: Simplify this with Closures???
 
-export async function _out_vendor_interface_control_transfer(usbDevice, request, value, index) {
+export async function _out_vendor_interface_control_transfer(usbDevice, request, value, index, data) {
     var parameters = {
         requestType: 'vendor',
         recipient: 'interface',
@@ -8,7 +8,13 @@ export async function _out_vendor_interface_control_transfer(usbDevice, request,
         value : value,
         index : index
     };
-    let result = await usbDevice.controlTransferOut(parameters);
+    let result;
+    if(data != null) {
+        result = await usbDevice.controlTransferOut(parameters, data);
+    }else{
+        result = await usbDevice.controlTransferOut(parameters);
+    }
+   
     return result;
 }
 
