@@ -1,4 +1,5 @@
 import * as BasicCalls from './basicUsbCalls.js'
+import * as Constants from './constants.js'
 
 const CP210x_IFC_ENABLE = 0x00;
 const CP210x_UART_ENABLE = 0x0001;
@@ -10,6 +11,7 @@ const CP210x_PURGE = 0x12;
 const CP210x_PURGE_ALL = 0x000f;
 const CP210x_UART_DISABLE = 0x0000;
 const CP210x_SET_BAUDRATE = 0x1e;
+const CP210x_GET_COMM_STATUS = 0x10;
 
 //TODO: Add different functions
 export async function open(usbDevice) {
@@ -85,10 +87,48 @@ export async function setBaudRate(usbDevice, baudRate) {
         0,
         data
     );
+
+    //TODO: Maybe return something?
 }
 
 export async function setDataBits(usbDevice, dataBits) {
-    //TODO
+    let result = await BasicCalls._in_vendor_interface_control_transfer(
+        usbDevice,
+        CP210x_GET_COMM_STATUS,
+        0,
+        0,
+        2
+    );
+
+    if(result.data != null) {
+        let lsb = result.data.getInt8(0);
+        let msb = result.data.getInt8(1);
+        let wValue = (msb << 8) | (lsb & 0xff);
+        wValue &= ~0x0f00;
+
+        switch(dataBits) {
+            case Constants.DATA_BITS_5:
+                wValue |= 0x0500;
+                break;
+            case Constants.DATA_BITS_6:
+                wValue |= 0x0600;
+                break;
+            case Constants.DATA_BITS_7:
+                wValue |= 0x0700;
+                break;
+            case Constants.DATA_BITS_8:
+                wValue |= 0x0800;
+                break;
+        }
+
+        await BasicCalls._out_vendor_interface_control_transfer(
+            usbDevice,
+            CP210x_SET_LINE_CTL,
+            wValue,
+            0,
+            null
+        );
+    }
 }
 
 export async function setStopBits(usbDevice, stopBits) {

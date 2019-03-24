@@ -8,6 +8,7 @@ Object.assign(WebUsbSerial.prototype, {
 
     open: function() {
         //TODO!!
+        //TODO: Remember requestDeviceCall!!
     },
 
     close: function() {

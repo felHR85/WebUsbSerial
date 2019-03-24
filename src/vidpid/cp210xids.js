@@ -1,4 +1,4 @@
-
+//TODO: Best implementation in UsbSerial Android.
 function VidPidPair(vid, pid) {
     this.vid = vid;
     this.pid = pid;

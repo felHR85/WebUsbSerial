@@ -18,7 +18,7 @@ export async function _out_vendor_interface_control_transfer(usbDevice, request,
     return result;
 }
 
-export async function _in_vendor_interface_control_transfer(usbDevice, request, value, index){
+export async function _in_vendor_interface_control_transfer(usbDevice, request, value, index, length){
     var parameters = {
         requestType: 'vendor',
         recipient: 'interface',
@@ -26,6 +26,6 @@ export async function _in_vendor_interface_control_transfer(usbDevice, request, 
         value : value,
         index : index
     };
-    let result = await usbDevice.controlTransferIn(parameters);
+    let result = await usbDevice.controlTransferIn(parameters, length);
     return result;
 }
