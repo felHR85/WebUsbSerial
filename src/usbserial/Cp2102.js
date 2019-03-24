@@ -132,9 +132,84 @@ export async function setDataBits(usbDevice, dataBits) {
 }
 
 export async function setStopBits(usbDevice, stopBits) {
-    //TODO
+    let result = await BasicCalls._in_vendor_interface_control_transfer(
+        usbDevice,
+        CP210x_GET_COMM_STATUS,
+        0,
+        0,
+        2
+    );
+
+    if(result.data != null) {
+        let lsb = result.data.getInt8(0);
+        let msb = result.data.getInt8(1);
+        let wValue = (msb << 8) | (lsb & 0xff);
+        wValue &= ~0x0003;
+
+        switch(stopBits) {
+            case Constants.STOP_BITS_1 :
+                wValue |= 0;
+                break;
+            case Constants.STOP_BITS_15:
+                wValue |= 1;
+                break;
+            case Constants.STOP_BITS_2:
+                wValue |= 2;
+                break;
+            default:
+                return;
+        }
+
+        await BasicCalls._out_vendor_interface_control_transfer(
+            usbDevice,
+            CP210x_SET_LINE_CTL,
+            wValue,
+            0,
+            null
+        );
+    }
 }
 
 export async function setParity(usbDevice, parity) {
-    //TODO
+    let result = await BasicCalls._in_vendor_interface_control_transfer(
+        usbDevice,
+        CP210x_GET_COMM_STATUS,
+        0,
+        0,
+        2
+    );
+
+    if(result.data != null) {
+        let lsb = result.data.getInt8(0);
+        let msb = result.data.getInt8(1);
+        let wValue = (msb << 8) | (lsb & 0xff);
+        wValue &= ~0x0f00;
+        switch(parity) {
+            case Constants.PARITY_NONE:
+                wValue |= 0x0000;
+                break;
+            case Constants.PARITY_ODD:
+                wValue |= 0x0010;
+                break;
+            case Constants.PARITY_EVEN:
+                wValue |= 0x0020;
+                break;
+            case Constants.PARITY_MARK:
+                wValue |= 0x0030;
+                break;
+            case Constants.PARITY_SPACE:
+                wValue |= 0x0040;
+                break;
+            default:
+                return;
+        }
+
+        await BasicCalls._out_vendor_interface_control_transfer(
+            usbDevice,
+            CP210x_SET_LINE_CTL,
+            wValue,
+            0,
+            null
+        );
+    }
 }
