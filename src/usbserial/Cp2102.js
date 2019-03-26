@@ -13,7 +13,6 @@ const CP210x_UART_DISABLE = 0x0000;
 const CP210x_SET_BAUDRATE = 0x1e;
 const CP210x_GET_COMM_STATUS = 0x10;
 
-//TODO: Add different functions
 export async function open(usbDevice) {
 
     await usbDevice.open();
@@ -70,6 +69,16 @@ export async function close(usbDevice) {
 
     await usbDevice.releaseInterface(0);
     await usbDevice.close();
+}
+
+//TODO: Currently endpoints are hardcoded in both read and write
+export async function read(usbDevice) {
+    let result = await usbDevice.transferIn(1, 512);
+    return result.data;
+}
+
+export async function write(usbDevice, data) {
+    await usbDevice.transferOut(2, data)
 }
 
 export async function setBaudRate(usbDevice, baudRate) {
